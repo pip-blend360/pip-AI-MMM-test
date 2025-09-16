@@ -132,11 +132,11 @@ dmypy.json
 data/raw/*
 data/external/*
 data/interim/*
-data/processed/*
 !data/raw/.gitkeep
 !data/external/.gitkeep
 !data/interim/.gitkeep
-!data/processed/.gitkeep
+# Allow processed data to be tracked
+# data/processed/*
 
 # Model artifacts
 models/
@@ -145,8 +145,8 @@ models/
 *.h5
 *.hdf5
 
-# Reports and figures
-reports/figures/*
+# Reports and figures - allow tracking
+# reports/figures/*
 !reports/figures/.gitkeep
 
 # IDE files
