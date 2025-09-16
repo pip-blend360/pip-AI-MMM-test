@@ -76,10 +76,22 @@ def load_data():
         dma_channel = pd.read_csv('data/processed/dma_channel_data.csv')
         national_channel = pd.read_csv('data/processed/national_channel_data.csv')
         
-        # Convert month columns to datetime
+        # Convert date columns to datetime and standardize column names
         for df in [dma_aggregated, national_aggregated, dma_channel, national_channel]:
-            if 'month' in df.columns:
+            if 'date' in df.columns:
+                df['month'] = pd.to_datetime(df['date'])
+            elif 'month' in df.columns:
                 df['month'] = pd.to_datetime(df['month'])
+        
+        # Standardize DMA column names
+        if 'DMA_Code' in dma_aggregated.columns:
+            dma_aggregated['dma'] = dma_aggregated['DMA_Code'].astype(str)
+        if 'DMA_Code' in dma_channel.columns:
+            dma_channel['dma'] = dma_channel['DMA_Code'].astype(str)
+        
+        # Add 'dma' column to national data
+        national_aggregated['dma'] = 'National'
+        national_channel['dma'] = 'National'
         
         return dma_aggregated, national_aggregated, dma_channel, national_channel
     except FileNotFoundError as e:
@@ -93,19 +105,23 @@ def get_available_channels(df):
         return []
     
     # Marketing channels are columns that contain spend data
-    spend_columns = [col for col in df.columns if 'spend' in col.lower() or col in [
-        'Display_HCP', 'Display_DTC', 'Paid_Search_HCP', 
-        'Meetings', 'TeleDetails', 'Emails'
-    ]]
+    spend_columns = [col for col in df.columns if 'spend' in col.lower()]
     return sorted(spend_columns)
 
 def get_available_dmas(df):
     """Extract available DMAs from dataframe."""
-    if df is None or 'dma' not in df.columns:
+    if df is None:
         return ['National']
     
-    dmas = sorted(df['dma'].unique().tolist())
-    return ['National'] + dmas
+    # Check if we have DMA data
+    if 'DMA_Code' in df.columns:
+        dmas = sorted(df['DMA_Code'].unique().tolist())
+        return ['National'] + [str(dma) for dma in dmas]
+    elif 'dma' in df.columns:
+        dmas = sorted(df['dma'].unique().tolist())
+        return ['National'] + dmas
+    else:
+        return ['National']
 
 def create_time_series_plot(data, channel, dma, xkcd_style=False):
     """Create time series plot for selected channel and DMA."""
