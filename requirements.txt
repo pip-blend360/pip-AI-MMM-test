@@ -26,6 +26,7 @@ xlrd>=2.0.0      # For older Excel files
 # Visualization
 plotly>=5.0.0
 bokeh>=2.4.0
+streamlit>=1.25.0  # Interactive dashboard
 
 # Development tools
 jupyter>=1.0.0
