@@ -168,6 +168,67 @@ def create_single_channel_plot(data, channel, dma, xkcd_style=False):
     
     return fig
 
+def create_spend_nrx_scatterplot(data, channel, dma, xkcd_style=False):
+    """Create a scatterplot between channel spend and NRX for selected DMA."""
+    if data is None or data.empty:
+        return None
+    
+    # Filter data
+    if dma == 'National':
+        plot_data = data[data['dma'] == 'National'].copy()
+        title_suffix = "National"
+    else:
+        plot_data = data[data['dma'] == dma].copy()
+        title_suffix = f"DMA: {dma}"
+    
+    if plot_data.empty or channel not in plot_data.columns or 'NRX' not in plot_data.columns:
+        return None
+    
+    # Remove any rows with missing values
+    plot_data = plot_data[[channel, 'NRX']].dropna()
+    
+    if plot_data.empty:
+        return None
+    
+    # Create the plot
+    fig, ax = plt.subplots(figsize=(10, 6))
+    
+    if xkcd_style:
+        enable_xkcd_style()
+    
+    # Create scatter plot
+    ax.scatter(plot_data[channel], plot_data['NRX'], 
+              alpha=0.7, s=60, color='#ff7f0e', edgecolors='black', linewidth=0.5)
+    
+    # Add trend line
+    z = np.polyfit(plot_data[channel], plot_data['NRX'], 1)
+    p = np.poly1d(z)
+    ax.plot(plot_data[channel], p(plot_data[channel]), 
+            "r--", alpha=0.8, linewidth=2, label=f'Trend (slope: {z[0]:.4f})')
+    
+    # Format channel name for display
+    channel_display = channel.replace('spend_', '').replace('_', ' ').title()
+    
+    ax.set_title(f'{channel_display} Spend vs NRX - {title_suffix}', 
+                fontsize=16, fontweight='bold')
+    ax.set_xlabel(f'{channel_display} Spend ($)', fontsize=12)
+    ax.set_ylabel('NRX (New Prescriptions)', fontsize=12)
+    ax.grid(True, alpha=0.3)
+    ax.legend()
+    
+    # Calculate correlation
+    correlation = plot_data[channel].corr(plot_data['NRX'])
+    ax.text(0.05, 0.95, f'Correlation: {correlation:.3f}', 
+            transform=ax.transAxes, fontsize=12, 
+            bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
+    
+    plt.tight_layout()
+    
+    if xkcd_style:
+        disable_xkcd_style()
+    
+    return fig
+
 def calculate_metrics(data, channel, dma):
     """Calculate key metrics for selected channel and DMA."""
     if data is None or data.empty:
@@ -252,12 +313,20 @@ def main():
         channel_display = selected_channel.replace('spend_', '').replace('_', ' ').title()
         st.header(f"📈 {channel_display} Analysis")
         
-        # Single channel plot
-        fig = create_single_channel_plot(data, selected_channel, selected_dma, xkcd_style)
-        if fig:
-            st.pyplot(fig)
+        # Single channel time series plot
+        fig1 = create_single_channel_plot(data, selected_channel, selected_dma, xkcd_style)
+        if fig1:
+            st.pyplot(fig1)
         else:
             st.warning(f"No data available for {channel_display} in {selected_dma}")
+        
+        # Scatterplot: Channel Spend vs NRX
+        st.subheader("📊 Spend vs NRX Relationship")
+        fig2 = create_spend_nrx_scatterplot(data, selected_channel, selected_dma, xkcd_style)
+        if fig2:
+            st.pyplot(fig2)
+        else:
+            st.warning(f"No NRX data available for {channel_display} in {selected_dma}")
     
     with col2:
         st.header("📊 Key Metrics")

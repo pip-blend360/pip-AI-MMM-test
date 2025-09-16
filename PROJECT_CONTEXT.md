@@ -19,7 +19,8 @@ Building a Python Marketing Mix Modeling (MMM) project using functional programm
 - ✅ Data loading implementation
 - ✅ HCP-level data transformation
 - ✅ Interactive EDA dashboard with Streamlit
-- 🔄 Feature engineering pipeline
+- 🔄 Adding NRX scatterplot to dashboard (in progress)
+- ⏳ Feature engineering pipeline
 - ⏳ Model architecture design
 
 ## Key Context
