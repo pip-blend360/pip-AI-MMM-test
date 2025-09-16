@@ -123,8 +123,9 @@ def get_available_dmas(df):
     else:
         return ['National']
 
-def create_time_series_plot(data, channel, dma, xkcd_style=False):
-    """Create time series plot for selected channel and DMA."""
+
+def create_single_channel_plot(data, channel, dma, xkcd_style=False):
+    """Create a single channel plot for selected DMA."""
     if data is None or data.empty:
         return None
     
@@ -136,7 +137,7 @@ def create_time_series_plot(data, channel, dma, xkcd_style=False):
         plot_data = data[data['dma'] == dma].copy()
         title_suffix = f"DMA: {dma}"
     
-    if plot_data.empty:
+    if plot_data.empty or channel not in plot_data.columns:
         return None
     
     # Create the plot
@@ -147,75 +148,19 @@ def create_time_series_plot(data, channel, dma, xkcd_style=False):
     
     # Plot the time series
     ax.plot(plot_data['month'], plot_data[channel], 
-            marker='o', linewidth=2, markersize=6)
+            marker='o', linewidth=2, markersize=6, color='#1f77b4')
     
-    ax.set_title(f'{channel} Spend Over Time - {title_suffix}', 
+    # Format channel name for display
+    channel_display = channel.replace('spend_', '').replace('_', ' ').title()
+    
+    ax.set_title(f'{channel_display} Spend Over Time - {title_suffix}', 
                 fontsize=16, fontweight='bold')
     ax.set_xlabel('Month', fontsize=12)
-    ax.set_ylabel(f'{channel} Spend ($)', fontsize=12)
+    ax.set_ylabel(f'{channel_display} Spend ($)', fontsize=12)
     ax.grid(True, alpha=0.3)
     
     # Rotate x-axis labels for better readability
     plt.xticks(rotation=45)
-    plt.tight_layout()
-    
-    if xkcd_style:
-        disable_xkcd_style()
-    
-    return fig
-
-def create_channel_comparison_plot(data, dma, xkcd_style=False):
-    """Create channel comparison plot for selected DMA."""
-    if data is None or data.empty:
-        return None
-    
-    # Filter data
-    if dma == 'National':
-        plot_data = data[data['dma'] == 'National'].copy()
-        title_suffix = "National"
-    else:
-        plot_data = data[data['dma'] == dma].copy()
-        title_suffix = f"DMA: {dma}"
-    
-    if plot_data.empty:
-        return None
-    
-    # Get channel columns
-    channels = get_available_channels(data)
-    if not channels:
-        return None
-    
-    # Create subplot for each channel
-    n_channels = len(channels)
-    n_cols = 3
-    n_rows = (n_channels + n_cols - 1) // n_cols
-    
-    fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 4*n_rows))
-    if n_rows == 1:
-        axes = [axes] if n_cols == 1 else axes
-    else:
-        axes = axes.flatten()
-    
-    if xkcd_style:
-        enable_xkcd_style()
-    
-    for i, channel in enumerate(channels):
-        if i < len(axes):
-            ax = axes[i]
-            ax.plot(plot_data['month'], plot_data[channel], 
-                   marker='o', linewidth=2, markersize=4)
-            ax.set_title(f'{channel}', fontsize=12, fontweight='bold')
-            ax.set_xlabel('Month', fontsize=10)
-            ax.set_ylabel('Spend ($)', fontsize=10)
-            ax.grid(True, alpha=0.3)
-            ax.tick_params(axis='x', rotation=45)
-    
-    # Hide unused subplots
-    for i in range(len(channels), len(axes)):
-        axes[i].set_visible(False)
-    
-    fig.suptitle(f'All Channels Comparison - {title_suffix}', 
-                fontsize=16, fontweight='bold')
     plt.tight_layout()
     
     if xkcd_style:
@@ -309,24 +254,20 @@ def main():
         help="Use hand-drawn, comic-style plots"
     )
     
-    show_comparison = st.sidebar.checkbox(
-        "Show All Channels Comparison",
-        value=False,
-        help="Display comparison plot of all channels"
-    )
-    
     # Main content area
     col1, col2 = st.columns([2, 1])
     
     with col1:
-        st.header(f"📈 {selected_channel} Analysis")
+        # Format channel name for display
+        channel_display = selected_channel.replace('spend_', '').replace('_', ' ').title()
+        st.header(f"📈 {channel_display} Analysis")
         
-        # Time series plot
-        fig = create_time_series_plot(data, selected_channel, selected_dma, xkcd_style)
+        # Single channel plot
+        fig = create_single_channel_plot(data, selected_channel, selected_dma, xkcd_style)
         if fig:
             st.pyplot(fig)
         else:
-            st.warning(f"No data available for {selected_channel} in {selected_dma}")
+            st.warning(f"No data available for {channel_display} in {selected_dma}")
     
     with col2:
         st.header("📊 Key Metrics")
@@ -338,15 +279,6 @@ def main():
                 st.metric(metric_name, metric_value)
         else:
             st.warning("No metrics available")
-    
-    # Channel comparison section
-    if show_comparison:
-        st.header("🔄 All Channels Comparison")
-        comparison_fig = create_channel_comparison_plot(data, selected_dma, xkcd_style)
-        if comparison_fig:
-            st.pyplot(comparison_fig)
-        else:
-            st.warning(f"No comparison data available for {selected_dma}")
     
     # Data summary section
     st.header("📋 Data Summary")
