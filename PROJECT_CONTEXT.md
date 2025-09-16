@@ -11,8 +11,9 @@ Building a Python Marketing Mix Modeling (MMM) project using functional programm
 - ✅ Project structure setup
 - ✅ Git repository initialization
 - ✅ Data organization planning
-- 🔄 Documentation system setup
-- ⏳ GitHub repository push
+- ✅ Documentation system setup
+- ✅ GitHub repository push
+- ✅ Requirements document creation
 - ⏳ Data loading implementation
 
 ## Key Context
@@ -27,6 +28,9 @@ Building a Python Marketing Mix Modeling (MMM) project using functional programm
 2. **Data Organization**: Standard data science pipeline
 3. **Documentation**: Multi-file approach for different contexts
 4. **Version Control**: Comprehensive `.gitignore` for data files
+5. **Requirements**: Comprehensive MMM requirements for drug manufacturer
+6. **Model Approach**: Bayesian MMM with hierarchical structure
+7. **Compliance**: FDA/EMA pharmaceutical marketing guidelines
 
 ### Active Discussions
 - Data loading strategy for CSV files
@@ -48,4 +52,5 @@ Building a Python Marketing Mix Modeling (MMM) project using functional programm
 ## Resources
 - Development log: `DEVELOPMENT.md`
 - Architecture decisions: `docs/decisions/`
+- Requirements document: `docs/requirements/MMM_Requirements_v1.md`
 - Project documentation: `docs/`
