@@ -16,7 +16,11 @@ Building a Python Marketing Mix Modeling (MMM) project using functional programm
 - ✅ Requirements document creation
 - ✅ Hybrid notebook + functional code approach
 - ✅ XKCD style plotting capabilities
-- ⏳ Data loading implementation
+- ✅ Data loading implementation
+- ✅ HCP-level data transformation
+- ✅ Interactive EDA dashboard with Streamlit
+- 🔄 Feature engineering pipeline
+- ⏳ Model architecture design
 
 ## Key Context
 

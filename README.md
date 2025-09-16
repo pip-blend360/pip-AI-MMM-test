@@ -18,10 +18,67 @@ A Python Marketing Mix Modeling (MMM) project, structured for functional program
 - **Project Docs**: `docs/` - Detailed documentation
 
 ## Getting Started
-1. Create a virtual environment
-2. Install dependencies from pyproject.toml
-3. Run tests with `pytest`
-4. Review `PROJECT_CONTEXT.md` for current development state
+1. **Clone the repository**
+   ```bash
+   git clone <your-repo-url>
+   cd pip-AI-MMM-test
+   ```
+
+2. **Set up Python environment**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+3. **Run data transformation**
+   ```bash
+   python scripts/run_data_transformation.py
+   ```
+
+4. **Launch Interactive Dashboard** 🎯
+   ```bash
+   # Option 1: Python launcher (recommended)
+   python scripts/launch_dashboard.py
+   
+   # Option 2: Windows batch file
+   launch_dashboard.bat
+   
+   # Option 3: Direct Streamlit command
+   streamlit run scripts/eda_dashboard.py
+   ```
+   
+   The dashboard will open at: **http://localhost:8501**
+
+5. **Review project context**
+   - Read `PROJECT_CONTEXT.md` for current development state
+   - Check `DEVELOPMENT.md` for development history
+
+## 📊 Interactive EDA Dashboard
+
+The project includes a comprehensive Streamlit dashboard for exploring MMM data:
+
+### **Dashboard Features:**
+- **🎛️ Interactive Controls**: Select channels and DMAs dynamically
+- **📈 Time Series Visualization**: Plot spend patterns over time
+- **🎨 XKCD Style Plots**: Toggle hand-drawn, comic-style visualizations
+- **📊 Key Metrics**: Real-time calculation of spend statistics
+- **🔄 Channel Comparison**: Side-by-side comparison of all channels
+- **📋 Data Summary**: Comprehensive data quality and range information
+
+### **Available Channels:**
+- Display_HCP, Display_DTC, Paid_Search_HCP
+- Meetings, TeleDetails, Emails
+
+### **Data Views:**
+- **Channel Level**: Individual channel spend data
+- **Aggregated Level**: Total spend and business metrics
+- **DMA Selection**: Choose specific DMAs or National view
+
+### **Usage:**
+Launch the dashboard and explore your data interactively. Perfect for:
+- Understanding spend patterns across channels and geographies
+- Identifying seasonal trends and anomalies
+- Validating data quality and completeness
+- Presenting findings with engaging XKCD-style plots
 
 ## AI-Assisted Development Setup
 
