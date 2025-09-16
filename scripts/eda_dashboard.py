@@ -212,20 +212,21 @@ def main():
     # Sidebar controls
     st.sidebar.header("🎛️ Dashboard Controls")
     
-    # Data level selection
-    data_level = st.sidebar.selectbox(
-        "Select Data Level:",
-        ["Channel Level", "Aggregated Level"],
-        help="Channel Level: Individual channel spend data\nAggregated Level: Total spend and business metrics"
-    )
+    # Use aggregated data (has all spend columns)
+    data = dma_aggregated
+    available_channels = get_available_channels(data)
     
-    # Choose appropriate dataset
-    if data_level == "Channel Level":
-        data = dma_channel
-        available_channels = get_available_channels(dma_channel)
+    # Channel selection (first, so it's prominent)
+    if available_channels:
+        selected_channel = st.sidebar.selectbox(
+            "Select Channel:",
+            available_channels,
+            index=0,  # Default to first channel
+            help="Choose a marketing channel to analyze"
+        )
     else:
-        data = dma_aggregated
-        available_channels = get_available_channels(dma_aggregated)
+        st.sidebar.error("No channels found in data")
+        st.stop()
     
     # DMA selection
     available_dmas = get_available_dmas(data)
@@ -234,17 +235,6 @@ def main():
         available_dmas,
         help="Choose a specific DMA or National for aggregated view"
     )
-    
-    # Channel selection
-    if available_channels:
-        selected_channel = st.sidebar.selectbox(
-            "Select Channel:",
-            available_channels,
-            help="Choose a marketing channel to analyze"
-        )
-    else:
-        st.sidebar.error("No channels found in data")
-        st.stop()
     
     # Visualization options
     st.sidebar.header("🎨 Visualization Options")
